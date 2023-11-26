@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/secondaryColor"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primaryColor"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="DarkStoriesAI"
+        app:titleTextColor="@color/white"
+        />
+
+    <!-- QUESTIONS AND ANSWERS -->
+    <ListView
+        android:id="@+id/historyListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/toolbar"
+        android:layout_above="@id/ask"
+    />
+
+
+    <LinearLayout
+        android:id="@+id/ask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp">
+
+        <EditText
+            android:id="@+id/inputText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:hint="Ask a yes or no question"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray"
+            android:backgroundTint="@color/black"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="96dp"
+            android:layout_height="48dp"
+            android:text="Ask"
+            android:backgroundTint="@color/primaryColor"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

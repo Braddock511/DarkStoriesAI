@@ -1,0 +1,25 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- HEADER -->
+    <TextView
+        android:id="@+id/headerViewItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:padding="6dp"
+        android:alpha="0.5"
+        />
+
+    <!-- QUESTION -->
+    <TextView
+        android:id="@+id/textViewItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:padding="12dp"
+        />
+</LinearLayout>
