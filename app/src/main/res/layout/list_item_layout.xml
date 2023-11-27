@@ -4,6 +4,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <!-- LOADING -->
+    <ProgressBar
+        android:id="@+id/loadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        style="?android:attr/progressBarStyle"/>
+
+
     <!-- HEADER -->
     <TextView
         android:id="@+id/headerViewItem"
@@ -12,7 +22,7 @@
         android:textColor="@color/white"
         android:padding="6dp"
         android:alpha="0.5"
-        />
+        android:visibility="gone"/>
 
     <!-- QUESTION -->
     <TextView
@@ -21,5 +31,6 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:padding="12dp"
-        />
+        android:visibility="gone"/>
+
 </LinearLayout>

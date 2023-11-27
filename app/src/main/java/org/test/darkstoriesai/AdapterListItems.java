@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -31,10 +32,24 @@ public class AdapterListItems extends ArrayAdapter<ListItem> {
         // Set the data for the item
         TextView headerViewItem = rowView.findViewById(R.id.headerViewItem);
         TextView textViewItem = rowView.findViewById(R.id.textViewItem);
+        ProgressBar loadingIndicator = rowView.findViewById(R.id.loadingIndicator);
 
         ListItem listItem = items.get(position);
-        headerViewItem.setText(listItem.getHeader());
-        textViewItem.setText(listItem.getQuestion());
+
+        // Show or hide loading indicator based on the item state
+        if (listItem.isLoading()) {
+            loadingIndicator.setVisibility(View.VISIBLE);
+            headerViewItem.setVisibility(View.GONE);
+            textViewItem.setVisibility(View.GONE);
+        } else {
+            loadingIndicator.setVisibility(View.GONE);
+            headerViewItem.setVisibility(View.VISIBLE);
+            textViewItem.setVisibility(View.VISIBLE);
+
+            // Set the question text
+            headerViewItem.setText(listItem.getHeader());
+            textViewItem.setText(listItem.getQuestion());
+        }
 
         return rowView;
     }
