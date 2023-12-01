@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">DarkStoriesAI</string>
+    <string name="new_story">New Story</string>
+    <string name="solution">Solution</string>
+    <string name="ask">Ask</string>
+    <string name="question">Ask a yes or no question</string>
 </resources>

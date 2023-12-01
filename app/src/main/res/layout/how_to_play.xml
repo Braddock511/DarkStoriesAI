@@ -5,6 +5,7 @@
     android:id="@+id/welcomeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/secondaryColor"
     android:padding="16dp"
     tools:context=".MainActivity">
 
@@ -13,22 +14,43 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:gravity="center">
+        android:gravity="top">
+
+        <LinearLayout
+            android:id="@+id/back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_back_arrow"
+                android:layout_marginTop="3dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:textColor="@color/white"
+                android:textSize="20dp"/>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/textViewWelcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="asd"
-            android:textSize="24sp"
+            android:layout_marginBottom="48dp"
+            android:text="1. AI generates story to solve\n\n2. Ask a question about the story that can be answered yes or no\n\n3. If you know what the solution is, click the solution button and write the solution. Then the AI will answer whether this is a good solution"
+            android:textSize="22sp"
+            android:textColor="@color/white"
             android:textStyle="bold"
-            android:layout_marginBottom="48dp"/>
+            android:padding="10dp"/>
 
-        <Button
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back" />
+
     </LinearLayout>
 
 </RelativeLayout>
