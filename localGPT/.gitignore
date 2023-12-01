@@ -1,6 +1,6 @@
 # Ignore vscode
 /.vscode
-/DB
+scripts/DB
 /models
 
 # Byte-compiled / optimized / DLL files

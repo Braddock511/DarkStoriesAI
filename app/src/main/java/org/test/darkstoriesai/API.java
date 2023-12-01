@@ -27,18 +27,19 @@ public class API {
                 .build();
     }
 
-    public String sendRequest(String prompt) {
+    public String sendPrompt(String prompt, String sessionId) {
         try {
             // Define the request form data
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("user_prompt", prompt);
+            jsonBody.put("session_id", sessionId);
 
             // Serialize the JSON object to a string
             String json = jsonBody.toString();
             RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
             Request request = new Request.Builder()
-                    .url(String.format("http://%s/api/prompt_route", url))
+                    .url(String.format("http://%s/prompt", url))
                     .post(requestBody)
                     .header("Content-Type", "application/json")
                     .build();
@@ -49,6 +50,40 @@ public class API {
                 String jsonResponse = response.body().string();
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 return jsonObject.getString("Answer");
+            } else {
+                return "Request failed: " + response.body().string();
+            }
+        } catch (IOException e) {
+            Log.i("API", e.toString());
+            e.printStackTrace();
+            return "FAILED";
+        } catch (JSONException e) {
+            Log.i("API", e.toString());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String clearRedis(String sessionId) {
+        try {
+            // Define the request form data
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("session_id", sessionId);
+
+            // Serialize the JSON object to a string
+            String json = jsonBody.toString();
+            RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+
+            Request request = new Request.Builder()
+                    .url(String.format("http://%s/clear-redis", url))
+                    .post(requestBody)
+                    .header("Content-Type", "application/json")
+                    .build();
+
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful()) {
+                String jsonResponse = response.body().string();
+                return jsonResponse;
             } else {
                 return "Request failed: " + response.body().string();
             }
