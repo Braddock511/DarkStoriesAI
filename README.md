@@ -11,7 +11,7 @@ python localGPT/scripts/ingest.py
 ```
 2. Run the following command to launch API.
 ```shell
-run - python localGPT/scripts/run_localGPT_API.py
+python localGPT/scripts/run_localGPT_API.py
 ```
 3. API should run on http://0.0.0.0:5110 
 4. You can run the interface in Android Studio
