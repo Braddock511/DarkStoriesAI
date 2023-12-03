@@ -40,14 +40,13 @@ accelerate = "^0.24.1"
 bitsandbytes = {markers = "sys_platform != \"win32\"", version = "^0.41.2.post2"}
 bitsandbytes-windows = {markers = "sys_platform == \"win32\"", version = "^0.37.5"}
 click = "^8.1.7"
-flask = "^3.0.0"
 requests = "^2.31.0"
 streamlit = "^1.28.2"
 streamlit-extras = "^0.3.5"
 openpyxl = "^3.1.2"
 llama-cpp-python = "0.1.83"
-flask-cors = "^4.0.0"
 redis = "^5.0.1"
+fastapi = "0.95.2"
 
 
 [build-system]
