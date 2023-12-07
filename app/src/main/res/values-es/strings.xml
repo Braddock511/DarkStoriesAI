@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">DarkStoriesAI</string>
+    <string name="new_story">Nueva Historia</string>
+    <string name="solution">Solución</string>
+    <string name="ask">Preguntar</string>
+    <string name="question">Haz una pregunta de sí o no</string>
+    <string name="back">Atrás</string>
+    <string name="how_to_play">
+        1. El AI genera una historia de misterio para que la resuelvas. Lee la historia cuidadosamente y toma nota de cualquier pista o detalle que pueda ser importante.\n\n
+        2. Una vez que hayas leído la historia, hazle una pregunta al AI al respecto. El AI solo responderá sí o no a tus preguntas. Utiliza tus preguntas para recopilar información y reducir las posibilidades para la solución.\n\n
+        3. Si crees que conoces la solución al misterio, haz clic en el botón de Solución e ingresa tu conjetura. El AI te dirá entonces si tu conjetura es correcta o no.</string>
+    <string name="how_to_play_menu">¿Cómo jugar?</string>
+    <string name="languages">Idiomas</string>
+    <string name="language">Español</string>
+</resources>

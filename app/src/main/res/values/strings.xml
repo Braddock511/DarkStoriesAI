@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">DarkStoriesAI</string>
-    <string name="new_story">New Story</string>
+    <string name="new_story" >New Story</string>
     <string name="solution">Solution</string>
     <string name="ask">Ask</string>
     <string name="question">Ask a yes or no question</string>
+    <string name="back">Back</string>
+    <string name="how_to_play">
+        1. The AI generates a mystery story for you to solve. Read the story carefully and take note of any clues or details that might be important.\n\n
+        2. Once you have read the story, ask the AI a question about it. The AI will only answer yesor noto your questions. Use your questions to gather information and narrow down the possibilities for the solution.\n\n
+        3. If you think you know the solution to the mystery, click the Solutionbutton and enter your guess. The AI will then tell you whether your guess is correct or not.</string>
+    <string name="how_to_play_menu">How to play?</string>
+    <string name="languages">Languages</string>
+    <string name="language">English</string>
 </resources>

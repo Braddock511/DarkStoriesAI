@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name" translatable="false">DarkStoriesAI w języku polskim</string>
+    <string name="new_story" translatable="false">Nowa historia</string>
+    <string name="solution" translatable="false">Rozwiązanie</string>
+    <string name="ask" translatable="false">Zapytaj</string>
+    <string name="question" translatable="false">Zadaj pytanie o tak lub nie</string>
+    <string name="back" translatable="false">Wstecz</string>
+    <string name="how_to_play">
+        1. AI generuje dla Ciebie tajemniczą historię do rozwiązania. Przeczytaj uważnie historię i zapisz wszystkie wskazówki lub szczegóły, które mogą być ważne.\n\n
+        2. Po przeczytaniu historii zadaj AI pytanie na jej temat. AI odpowie tylko na tak lub nie na twoje pytania. Użyj swoich pytań, aby zebrać informacje i zawęzić możliwości rozwiązania.\n\n
+        3. Jeśli uważasz, że znasz rozwiązanie historii, wpisz swoją odpowiedź i kliknij przycisk Rozwiązanie. AI powie ci, czy twoja odpowiedź jest poprawna, czy nie.
+    </string>
+    <string name="how_to_play_menu">Jak grać?</string>
+    <string name="languages">Języki</string>
+    <string name="language">Polski</string>
+</resources>

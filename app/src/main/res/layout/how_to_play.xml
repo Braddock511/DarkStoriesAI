@@ -1,57 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/welcomeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondaryColor"
-    android:padding="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="top">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_back_arrow"
-                android:layout_marginTop="3dp"
-                />
+                android:layout_marginTop="2dp"
+                android:contentDescription="@string/back" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Back"
+                android:text="@string/back"
                 android:textColor="@color/white"
-                android:textSize="20dp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
-
 
         <TextView
             android:id="@+id/textViewWelcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="48dp"
-            android:text="1. AI generates story to solve\n\n2. Ask a question about the story that can be answered yes or no\n\n3. If you know what the solution is, click the solution button and write the solution. Then the AI will answer whether this is a good solution"
-            android:textSize="22sp"
+            android:layout_marginTop="15dp"
+            android:text='@string/how_to_play'
+            android:textSize="18sp"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:lineSpacingExtra="8dp"
+            app:layout_constraintTop_toBottomOf="@id/back"/>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
-
-</RelativeLayout>
+</ScrollView>
 

@@ -10,12 +10,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +28,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
 //    SplashActivity splashLoading = new SplashActivity();
-    String sessionId = UUID.randomUUID().toString();
+    private String sessionId = UUID.randomUUID().toString();
+    private AdapterListItems adapter;
+    private AtomicInteger loadingIndex;
+    private final API api = new API();
+    private String lang = "english";
+    private String storyFormatPrompt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +52,18 @@ public class MainActivity extends AppCompatActivity {
         // Story
         ListView listView = findViewById(R.id.historyListView);
         List<ListItem> loadItemsList = new ArrayList<>();
-        AdapterListItems adapter = new AdapterListItems(this, loadItemsList); // TODO load data from database
+        adapter = new AdapterListItems(this, loadItemsList); // TODO load data from database
         listView.setAdapter(adapter);
 
-        String storyPrompt = "Write dark story and topic story. According to this instruction:\nTOPIC: \nSTORY: ";
-
-//        processPrompt(adapter, storyPrompt, "STORY TELLER", new AtomicInteger(0));
+        TextView languageTextView = findViewById(R.id.language);
+        lang = languageTextView.getText().toString();
+        storyFormatPrompt = String.format("Write dark story, in %s language", lang);
+//        createStory(storyFormatPrompt);
 
         // User ask
         EditText questionPrompt = findViewById(R.id.questionPrompt);
         Button askButton = findViewById(R.id.askButton);
-        AtomicInteger loadingIndex = new AtomicInteger(2); //Start on 2, because 0. Story 1. Question
+        loadingIndex = new AtomicInteger(2); //Start on 2, because 0. Story 1. Question
 
         askButton.setOnClickListener(v -> {
             String text = questionPrompt.getText().toString();
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.add(new ListItem("ASKER", text));
             questionPrompt.getText().clear();
 
-//            processPrompt(adapter, format("Answer for this - %s", text), "STORY TELLER", loadingIndex);
+            answer(text);
         });
 
         // Buttons
@@ -73,9 +82,10 @@ public class MainActivity extends AppCompatActivity {
         solutionButton.setOnClickListener(v -> {
             String questionSolution = questionPrompt.getText().toString();
             if (!questionSolution.equals("")) {
+                adapter.add(new ListItem("ASKER", questionSolution));
                 questionPrompt.getText().clear();
                 String solutionPrompt = format("This is solution? - %s", questionSolution);
-                processPrompt(adapter, solutionPrompt, "STORY TELLER", loadingIndex);
+                solution(solutionPrompt);
             }
             else{
                 Snackbar snackbar = Snackbar.make(actualView, "Write solution in input!", Snackbar.LENGTH_SHORT);
@@ -84,17 +94,73 @@ public class MainActivity extends AppCompatActivity {
         });
 
         newStoryButton.setOnClickListener(v -> {
-            CompletableFuture.supplyAsync(() -> {
-                API api = new API();
-                return api.clearRedis(sessionId);
-            }).thenAcceptAsync(result -> runOnUiThread(() -> {
-                loadingIndex.set(0);
-                adapter.clear();
-                adapter.notifyDataSetChanged();
-            }));
-
-            processPrompt(adapter, storyPrompt, "STORY TELLER", new AtomicInteger(0));
+            lang = languageTextView.getText().toString();
+            storyFormatPrompt = String.format("Write dark story, in %s language", lang);
+            loadingIndex.set(0);
+            adapter.clear();
+            createStory(storyFormatPrompt);
         });
+    }
+
+    // Main func
+    public void createStory(String storyFormatPrompt) {
+        CompletableFuture.supplyAsync(() -> {
+            // Loading
+            runOnUiThread(() -> {
+                loadingIndex = new AtomicInteger(2); //Start on 2, because 0. Story 1. Question
+                adapter.add(new ListItem(true));
+                adapter.notifyDataSetChanged();
+            });
+            return api.createStoryRequest(storyFormatPrompt, sessionId);
+        }).thenAcceptAsync(result -> runOnUiThread(() -> {
+            adapter.remove(adapter.getItem(0));  // Remove the loading item
+            try {
+                adapter.add(new ListItem("STORY TELLER", result.getString(("story"))));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            adapter.notifyDataSetChanged();
+        }));
+    }
+
+    public void answer(String askPrompt) {
+        CompletableFuture.supplyAsync(() -> {
+            // Loading
+            runOnUiThread(() -> {
+                adapter.add(new ListItem(true));
+                adapter.notifyDataSetChanged();
+            });
+            return api.ask(format("%s, asnwer in %s language", askPrompt, lang), sessionId);
+        }).thenAcceptAsync(result -> runOnUiThread(() -> {
+            adapter.remove(adapter.getItem(loadingIndex.get()));  // Remove the loading item
+            loadingIndex.addAndGet(2);
+            try {
+                adapter.add(new ListItem("STORY TELLER", result.getString("answer")));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            adapter.notifyDataSetChanged();
+        }));
+    }
+
+    public void solution(String solutionPrompt) {
+        CompletableFuture.supplyAsync(() -> {
+            // Loading
+            runOnUiThread(() -> {
+                adapter.add(new ListItem(true));
+                adapter.notifyDataSetChanged();
+            });
+            return api.sendSolution(solutionPrompt, sessionId);
+        }).thenAcceptAsync(result -> runOnUiThread(() -> {
+            adapter.remove(adapter.getItem(loadingIndex.get()));  // Remove the loading item
+            loadingIndex.addAndGet(2);
+            try {
+                adapter.add(new ListItem("STORY TELLER", result.getString("answer")));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            adapter.notifyDataSetChanged();
+        }));
     }
 
     // Toolbar
@@ -108,33 +174,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        // Handle menu item clicks here
         if (id == R.id.how_to_play_item) {
-            // Create an Intent to start a new activity
-            Intent intent = new Intent(MainActivity.this, HowToPlay.class);
-
-            // Start the new activity
-            startActivity(intent);
-
+            Intent howToPlayIntent = new Intent(MainActivity.this, HowToPlay.class);
+            startActivity(howToPlayIntent);
+            return true;
+        } else if (id == R.id.languages) {
+            Intent languagesIntent = new Intent(MainActivity.this, Languages.class);
+            startActivity(languagesIntent);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void processPrompt(AdapterListItems adapter, String storyPrompt, String header, AtomicInteger position) {
-        CompletableFuture.supplyAsync(() -> {
-            // Loading
-            adapter.add(new ListItem(true));
-            adapter.notifyDataSetChanged();
-
-            API api = new API();
-            return api.sendPrompt(storyPrompt, sessionId);
-        }).thenAcceptAsync(result -> runOnUiThread(() -> {
-            adapter.remove(adapter.getItem(position.get()));  // Remove the loading item
-            position.addAndGet(2);
-            adapter.add(new ListItem(header, result));
-            adapter.notifyDataSetChanged();
-        }));
     }
 }

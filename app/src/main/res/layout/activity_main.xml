@@ -8,6 +8,15 @@
     android:background="@color/secondaryColor"
     tools:context=".MainActivity">
 
+    <!-- Language -->
+    <TextView
+        android:id="@+id/language"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/language"
+        android:textColor="@color/primaryColor"
+        />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
