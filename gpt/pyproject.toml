@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "test"
+version = "0.1.0"
+description = ""
+authors = ["Rafał <wruku1212@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+openai = "^1.3.7"
+langchain = "^0.0.345"
+requests = "^2.31.0"
+python-dotenv = "^1.0.0"
+uvicorn = "^0.24.0.post1"
+fastapi = "^0.104.1"
+redis = "^5.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.17.0"
+black = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "missing-module-docstring",
+]
