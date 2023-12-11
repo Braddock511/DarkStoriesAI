@@ -12,4 +12,6 @@
     <string name="how_to_play_menu">¿Cómo jugar?</string>
     <string name="languages">Idiomas</string>
     <string name="language">Español</string>
+    <string name="saved_stories">Historias guardadas</string>
+    <string name="load">Carga</string>
 </resources>

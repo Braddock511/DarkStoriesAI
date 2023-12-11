@@ -3,7 +3,7 @@
     <string name="new_story" translatable="false">Nowa historia</string>
     <string name="solution" translatable="false">Rozwiązanie</string>
     <string name="ask" translatable="false">Zapytaj</string>
-    <string name="question" translatable="false">Zadaj pytanie o tak lub nie</string>
+    <string name="question" translatable="false">Zadaj pytanie na tak lub nie</string>
     <string name="back" translatable="false">Wstecz</string>
     <string name="how_to_play">
         1. AI generuje dla Ciebie tajemniczą historię do rozwiązania. Przeczytaj uważnie historię i zapisz wszystkie wskazówki lub szczegóły, które mogą być ważne.\n\n
@@ -13,4 +13,6 @@
     <string name="how_to_play_menu">Jak grać?</string>
     <string name="languages">Języki</string>
     <string name="language">Polski</string>
+    <string name="saved_stories">Zapisane historie</string>
+    <string name="load">Wczytaj</string>
 </resources>

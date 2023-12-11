@@ -1,9 +1,15 @@
 package org.test.darkstoriesai;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -15,7 +21,6 @@ import okhttp3.Response;
 public class API {
     private final OkHttpClient client;
     private final String url = "0.0.0.0:5110"; // If it doesn't work, enter your local IP address
-
     public API() {
         int timeoutSeconds = 60;
         this.client = new OkHttpClient.Builder()
@@ -100,4 +105,25 @@ public class API {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Map<String, Object>> storiesRequest() {
+        try {
+            Request request = new Request.Builder()
+                    .url(String.format("http://%s/stories", url))
+                    .header("Content-Type", "application/json")
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String responseBody = response.body().string();
+
+            // Use Gson to parse the JSON string
+            Gson gson = new Gson();
+            Type storyListType = new TypeToken<List<Map<String, Object>>>() {}.getType();
+            return gson.fromJson(responseBody, storyListType);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

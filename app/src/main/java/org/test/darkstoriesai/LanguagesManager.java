@@ -8,8 +8,8 @@ import android.content.res.Resources;
 import java.util.Locale;
 
 public class LanguagesManager {
-    private Context ct;
-    private SharedPreferences sharedPreferences;
+    private final Context ct;
+    private final SharedPreferences sharedPreferences;
     public LanguagesManager(Context ctx){
         ct = ctx;
         sharedPreferences = ct.getSharedPreferences("LANG", Context.MODE_PRIVATE);

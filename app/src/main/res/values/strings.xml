@@ -12,4 +12,6 @@
     <string name="how_to_play_menu">How to play?</string>
     <string name="languages">Languages</string>
     <string name="language">English</string>
+    <string name="saved_stories">Saved stories</string>
+    <string name="load">Load</string>
 </resources>

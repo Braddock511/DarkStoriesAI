@@ -22,11 +22,11 @@ STORY_TEMPLATE = """
     
 ASK_TEMPLATE = """
     Answer Yes or No in correct language to this question {ask}, referring to the {story}.
-    {format_instructions}    
+    {format_instructions}
 """
 
 SOLUTION_TEMPLATE = """
-    If this {user_solution} is equivalent to or demonstrates the same approach as this {solution}, write "You solved it, congratulations!" Otherwise, write "Something is missing, keep trying."
+    If this {user_solution} is equivalent to or demonstrates the same approach as this {solution}, write in correct language You solved it, congratulations! otherwise, write Something is missing, keep trying.
     {format_instructions}
 """
     
@@ -65,7 +65,7 @@ def answer(story: str, ask: str) -> Answer:
     return result
 
 def solution(solution: str, user_solution: str) -> Solution:
-    parser = PydanticOutputParser(pydantic_object=Answer)
+    parser = PydanticOutputParser(pydantic_object=Solution)
 
     llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model_name=OPENAI_MODEL)
     message = HumanMessagePromptTemplate.from_template(

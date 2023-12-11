@@ -39,8 +39,8 @@ public class Languages extends AppCompatActivity {
         back.setOnClickListener(view -> {
             finish();
 
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            Intent mainActivity = new Intent(this, MainActivity.class);
+            startActivity(mainActivity);
         });
     }
 }

@@ -8,33 +8,31 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
-public class AdapterListItems extends ArrayAdapter<ListItem> {
-    private Context context;
-    private List<ListItem> items;
+public class ListAnswers extends ArrayAdapter<Answer> {
+    private final Context context;
+    private final List<Answer> items;
 
-    // Constructor for the custom adapter
-    public AdapterListItems(Context context, List<ListItem> items) {
-        super(context, R.layout.list_item_layout, items);
+    public ListAnswers(Context context, List<Answer> items) {
+        super(context, R.layout.list_answers, items);
         this.context = context;
         this.items = items;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the inflater to inflate the custom list item layout
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rowView = inflater.inflate(R.layout.list_answers, parent, false);
 
-        // Inflate the custom list item layout
-        View rowView = inflater.inflate(R.layout.list_item_layout, parent, false);
-
-        // Set the data for the item
-        TextView headerViewItem = rowView.findViewById(R.id.headerViewItem);
+        TextView headerViewItem = rowView.findViewById(R.id.topicViewItem);
         TextView textViewItem = rowView.findViewById(R.id.textViewItem);
         ProgressBar loadingIndicator = rowView.findViewById(R.id.loadingIndicator);
 
-        ListItem listItem = items.get(position);
+        Answer listItem = items.get(position);
 
         // Show or hide loading indicator based on the item state
         if (listItem.isLoading()) {
@@ -46,7 +44,6 @@ public class AdapterListItems extends ArrayAdapter<ListItem> {
             headerViewItem.setVisibility(View.VISIBLE);
             textViewItem.setVisibility(View.VISIBLE);
 
-            // Set the question text
             headerViewItem.setText(listItem.getHeader());
             textViewItem.setText(listItem.getQuestion());
         }

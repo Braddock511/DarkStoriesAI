@@ -10,4 +10,9 @@
         android:title="@string/how_to_play_menu"
         android:icon="@drawable/ic_menu"
         />
+    <item
+        android:id="@+id/saved_stories"
+        android:title="@string/saved_stories"
+        android:icon="@drawable/ic_menu"
+        />
 </menu>
