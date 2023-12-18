@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Optional
 
 # GPT
 class Story(BaseModel):
@@ -19,8 +20,12 @@ class Solution(BaseModel):
 class StoryRequest(BaseModel):
     story_format: str
     session_id: str
+    user_id: str
 
 class UserPrompt(BaseModel):
     user_prompt: str
     session_id: str
-    
+
+class User(BaseModel):
+    user_id: str
+    name: Optional[str] = None

@@ -14,4 +14,8 @@
     <string name="language">Español</string>
     <string name="saved_stories">Historias guardadas</string>
     <string name="load">Carga</string>
+    <string name="loading">Cargando...</string>
+    <string name="name">Introduzca su nombre</string>
+    <string name="logo">logo</string>
+    <string name="next">Próximo</string>
 </resources>

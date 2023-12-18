@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from model_gpt import create_story, answer, solution
-from models import StoryRequest, UserPrompt
+from models import StoryRequest, UserPrompt, User
 from redisService import RedisHandler
 
 redis = RedisHandler("localhost")
@@ -22,11 +22,12 @@ app.add_middleware(
 async def story(request: StoryRequest):
     try:
         story_format = request.story_format
-        session_id = request.session_id  
+        session_id = request.session_id
+        user_id = request.user_id
 
         story = dict(create_story(story_format))
         story_key = f"story:{session_id}"
-        story_content = {"session_id": session_id, "topic": story['topic'], "story": story['story'], "answers": [{"index": 0, "answer": story['story']}], "solution": story['solution']}
+        story_content = {"session_id": session_id, "user_id": user_id, "topic": story['topic'], "story": story['story'], "answers": [{"index": 0, "answer": story['story']}], "solution": story['solution']}
         redis.set_value(story_key, story_content)  
         
         return story
@@ -76,19 +77,41 @@ async def solve(request: UserPrompt):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed: {e}")
 
-@app.get("/stories")
-async def stories():
+@app.post("/stories")
+async def stories(request: User):
     try:
-        #TODO dodanie user id       
-        # user = request.user_id
-        # stories_content = [redis.get_key(key) for key in redis_keys if key.split(":")[1]==user_id]
+        user_id = request.user_id
+
         redis_keys = redis.get_keys()
-        stories_content = [redis.get_key(key) for key in redis_keys]
+        stories_content = [redis.get_key(key) for key in redis_keys if redis.get_key(key)['user_id']==user_id]
 
         return stories_content
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed: {e}")
             
+@app.post("/set-user")
+async def set_user(request: User):
+    try:
+        user_id = request.user_id
+        name = request.name
 
+        user_key = f"user:{user_id}"
+        user_content = {"id": user_id, "name": name}
+        redis.set_value(user_key, user_content)
+
+        return user_content
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed: {e}")
+ 
+@app.post("/get-user")
+async def set_user(request: User):
+    try:
+        user_id = request.user_id
+        user_key = f"user:{user_id}"
+        
+        return redis.get_key(user_key)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed: {e}")
+        
 if __name__ == "__main__":    
     uvicorn.run(app, host="0.0.0.0", port=5110)

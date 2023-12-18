@@ -1,6 +1,8 @@
 package org.test.darkstoriesai;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -18,8 +20,9 @@ public class SavedStories  extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.saved_stories);
+        SharedPreferences preferences = getSharedPreferences("FIRST-LOADING", Context.MODE_PRIVATE);
 
-        setStories();
+        setStories(preferences.getString("userId", ""));
 
         LinearLayout back = findViewById(R.id.back);
         back.setOnClickListener(view -> {
@@ -30,9 +33,9 @@ public class SavedStories  extends AppCompatActivity {
         });
     }
 
-    public void setStories() {
+    public void setStories(String userId) {
         API api = new API();
-        CompletableFuture.supplyAsync(api::storiesRequest).thenAcceptAsync(result -> runOnUiThread(() -> {
+        CompletableFuture.supplyAsync(() -> api.storiesRequest(userId)).thenAcceptAsync(result -> runOnUiThread(() -> {
             ListView listView = findViewById(R.id.storiesListView);
             ArrayList<Map<String, Object>> emptyList = new ArrayList<>();
             ListStories adapter = new ListStories(this, this, emptyList);

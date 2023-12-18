@@ -15,4 +15,8 @@
     <string name="language">Polski</string>
     <string name="saved_stories">Zapisane historie</string>
     <string name="load">Wczytaj</string>
+    <string name="loading">Ładowanie...</string>
+    <string name="name">Wpisz swoje imię</string>
+    <string name="logo">logo</string>
+    <string name="next">Dalej</string>
 </resources>

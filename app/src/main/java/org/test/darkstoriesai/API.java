@@ -30,14 +30,13 @@ public class API {
                 .build();
     }
 
-    public JSONObject createStoryRequest(String story_format, String sessionId) {
+    public JSONObject createStoryRequest(String story_format, String sessionId, String userId) {
         try {
-            // Define the request form data
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("story_format", story_format);
             jsonBody.put("session_id", sessionId);
-
-            // Serialize the JSON object to a string
+            jsonBody.put("user_id", userId);
+            System.out.println(jsonBody);
             String json = jsonBody.toString();
             RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
@@ -57,12 +56,11 @@ public class API {
 
     public JSONObject ask(String prompt, String sessionId) {
         try {
-            // Define the request form data
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("user_prompt", prompt);
             jsonBody.put("session_id", sessionId);
+            System.out.println(jsonBody);
 
-            // Serialize the JSON object to a string
             String json = jsonBody.toString();
             RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
@@ -75,6 +73,7 @@ public class API {
             Response response = client.newCall(request).execute();
 
             String jsonResponse = response.body().string();
+            System.out.println(jsonResponse);
             return new JSONObject(jsonResponse);
         } catch (JSONException | IOException e) {
             throw new RuntimeException(e);
@@ -83,12 +82,10 @@ public class API {
 
     public JSONObject sendSolution(String prompt, String sessionId) {
         try {
-            // Define the request form data
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("user_prompt", prompt);
             jsonBody.put("session_id", sessionId);
 
-            // Serialize the JSON object to a string
             String json = jsonBody.toString();
             RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
@@ -106,22 +103,73 @@ public class API {
         }
     }
 
-    public List<Map<String, Object>> storiesRequest() {
+    public List<Map<String, Object>> storiesRequest(String userId) {
         try {
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("user_id", userId);
+
+            String json = jsonBody.toString();
+            RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+
             Request request = new Request.Builder()
                     .url(String.format("http://%s/stories", url))
+                    .post(requestBody)
                     .header("Content-Type", "application/json")
                     .build();
 
             Response response = client.newCall(request).execute();
             String responseBody = response.body().string();
 
-            // Use Gson to parse the JSON string
             Gson gson = new Gson();
             Type storyListType = new TypeToken<List<Map<String, Object>>>() {}.getType();
             return gson.fromJson(responseBody, storyListType);
 
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JSONObject setUser(String name, String userId) {
+        try {
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("user_id", userId);
+            jsonBody.put("name", name);
+
+            String json = jsonBody.toString();
+            RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+
+            Request request = new Request.Builder()
+                    .url(String.format("http://%s/set-user", url))
+                    .post(requestBody)
+                    .header("Content-Type", "application/json")
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String jsonResponse = response.body().string();
+            return new JSONObject(jsonResponse);
+        } catch (JSONException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JSONObject getUser(String userId) {
+        try {
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("user_id", userId);
+
+            String json = jsonBody.toString();
+            RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+
+            Request request = new Request.Builder()
+                    .url(String.format("http://%s/get-user", url))
+                    .post(requestBody)
+                    .header("Content-Type", "application/json")
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String jsonResponse = response.body().string();
+            return new JSONObject(jsonResponse);
+        } catch (JSONException | IOException e) {
             throw new RuntimeException(e);
         }
     }

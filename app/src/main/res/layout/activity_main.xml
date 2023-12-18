@@ -25,7 +25,8 @@
         android:elevation="4dp"
         android:theme="@style/WhiteTheme"
         app:title="DarkStoriesAI"
-        app:titleTextColor="@color/white" />
+        app:titleTextColor="@color/white"
+        />
 
     <!-- QUESTIONS AND ANSWERS -->
     <ListView

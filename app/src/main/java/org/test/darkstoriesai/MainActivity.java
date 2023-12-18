@@ -2,7 +2,10 @@ package org.test.darkstoriesai;
 
 import static java.lang.String.format;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,144 +25,169 @@ import org.json.JSONException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final API api = new API();
+    private String defaultSolved = "false";
+
     private String sessionId;
+    private String userId;
+    private String name;
+    private List<Map<String, Object>> stories;
+    private String language;
     private ListAnswers adapter;
     private AtomicInteger loadingIndex;
-    private final API api = new API();
-    private String lang = "english";
     private String storyFormatPrompt;
-    private String solved = "false";
     private Snackbar snackbar;
-    private List<Map<String, Object>> stories;
+    private SplashActivity splashLoading;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        LanguagesManager languagesManager = new LanguagesManager(newBase);
+        Locale newLocale = languagesManager.loadLanguage();
+        Configuration config = new Configuration(newBase.getResources().getConfiguration());
+        config.setLocale(newLocale);
+        Context context = newBase.createConfigurationContext(config);
+        super.attachBaseContext(context);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         View actualView = findViewById(android.R.id.content);
+        SharedPreferences preferences = getSharedPreferences("FIRST-LOADING", Context.MODE_PRIVATE);
 
-        TextView languageTextView = findViewById(R.id.language);
-        lang = languageTextView.getText().toString();
-        storyFormatPrompt = format("Write dark story, in %s language", lang);
+        boolean firstLoading = preferences.getBoolean("loadingFlag", false);
 
-        // Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Story
-        ListView listView = findViewById(R.id.historyListView);
-        Intent intent = getIntent();
-
-        if (intent != null && intent.hasExtra("story")) {
-            stories = (List<Map<String, Object>>) intent.getSerializableExtra("story");
-            List<Answer> answersList = new ArrayList<>();
-
-            for (Map<String, Object> story : stories) {
-                List<Map<String, Object>> answers = (List<Map<String, Object>>) story.get("answers");
-
-                for (Map<String, Object> answer : answers) {
-                    String answerText = (String) answer.get("answer");
-                    double index = (double) answer.get("index");
-                    String topic = story.get("topic").toString();
-                    String header = getHeaderFromIndex(index, topic);
-
-                    answersList.add(new Answer(header, answerText));
-                }
-                sessionId = (String) story.get("session_id");
-            }
-
-            adapter = new ListAnswers(this, answersList);
-            listView.setAdapter(adapter);
+        if (!firstLoading) {
+            Intent languagesIntent = new Intent(MainActivity.this, OnStartLanguages.class);
+            startActivity(languagesIntent);
         }
         else {
-            getStories().join();
+            language = preferences.getString("language", "english");
+            userId = preferences.getString("userId", "");
+            name = preferences.getString("name", "");
+            storyFormatPrompt = format("Write dark story, in %s language", language);
 
-            if (stories.isEmpty()){
-                List<Answer> loadItemsList = new ArrayList<>();
-                adapter = new ListAnswers(this, loadItemsList);
+            // Toolbar
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+            // Story
+            ListView listView = findViewById(R.id.historyListView);
+            Intent intent = getIntent();
+
+            if (intent != null && intent.hasExtra("story")) {
+                stories = (List<Map<String, Object>>) intent.getSerializableExtra("story");
+                List<Answer> answersList = new ArrayList<>();
+                loadingIndex = new AtomicInteger(0);
+
+                for (Map<String, Object> story : stories) {
+                    List<Map<String, Object>> answers = (List<Map<String, Object>>) story.get("answers");
+
+                    for (Map<String, Object> answer : answers) {
+                        String answerText = (String) answer.get("answer");
+                        double index = (double) answer.get("index");
+                        String topic = story.get("topic").toString();
+                        String header = getHeaderFromIndex(index, topic);
+                        loadingIndex.addAndGet(1);
+                        answersList.add(new Answer(header, answerText));
+                    }
+                    sessionId = (String) story.get("session_id");
+                }
+
+                loadingIndex.decrementAndGet();
+                adapter = new ListAnswers(this, answersList);
                 listView.setAdapter(adapter);
+            } else {
+                getStories(userId).join();
+
+                if (stories.isEmpty()) {
+                    List<Answer> loadItemsList = new ArrayList<>();
+                    adapter = new ListAnswers(this, loadItemsList);
+                    listView.setAdapter(adapter);
+
+                    sessionId = UUID.randomUUID().toString();
+                    createStory(storyFormatPrompt, sessionId);
+                } else {
+                    List<Answer> answersList = new ArrayList<>();
+                    Map<String, Object> lastStory = stories.get(stories.size() - 1);
+                    loadingIndex = new AtomicInteger(0);
+
+                    List<Map<String, Object>> answers = (List<Map<String, Object>>) lastStory.get("answers");
+                    sessionId = (String) lastStory.get("session_id");
+
+                    for (Map<String, Object> answer : answers) {
+                        String answerText = (String) answer.get("answer");
+                        double index = (double) answer.get("index");
+                        String header = getHeaderFromIndex(index, lastStory.get("topic").toString());
+                        loadingIndex.addAndGet(1);
+
+                        answersList.add(new Answer(header, answerText));
+                    }
+                    loadingIndex.decrementAndGet();
+
+                    adapter = new ListAnswers(this, answersList);
+                    listView.setAdapter(adapter);
+                }
+            }
+
+            // User ask
+            EditText questionPrompt = findViewById(R.id.questionPrompt);
+            Button askButton = findViewById(R.id.askButton);
+
+            askButton.setOnClickListener(v -> {
+                if (defaultSolved.equals("false")) {
+                    String text = questionPrompt.getText().toString();
+
+                    adapter.add(new Answer("ASKER", text));
+                    questionPrompt.getText().clear();
+
+                    answer(text);
+                } else {
+                    snackbar = Snackbar.make(actualView, "You already solved this story!", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
+            });
+
+            // User solution
+            Button solutionButton = findViewById(R.id.solutionButton);
+
+            solutionButton.setOnClickListener(v -> {
+                String questionSolution = questionPrompt.getText().toString();
+                if (defaultSolved.equals("false")) {
+                    if (!questionSolution.equals("")) {
+                        adapter.add(new Answer("ASKER", questionSolution));
+                        questionPrompt.getText().clear();
+
+                        String solutionPrompt = format("%s, answer in %s language", questionSolution, language);
+                        solution(solutionPrompt);
+                    } else {
+                        snackbar = Snackbar.make(actualView, "Write solution in input!", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                }
+            });
+
+            // New story
+            Button newStoryButton = findViewById(R.id.newStoryButton);
+
+            newStoryButton.setOnClickListener(v -> {
+                storyFormatPrompt = format("Write dark story, in %s language", language);
+                loadingIndex.set(0);
+                adapter.clear();
 
                 sessionId = UUID.randomUUID().toString();
                 createStory(storyFormatPrompt, sessionId);
-            }
-            else{
-                List<Answer> answersList = new ArrayList<>();
-                Map<String, Object> lastStory = stories.get(stories.size() - 1);
-
-                List<Map<String, Object>> answers = (List<Map<String, Object>>) lastStory.get("answers");
-                sessionId = (String) lastStory.get("session_id");
-
-                for (Map<String, Object> answer : answers) {
-                    String answerText = (String) answer.get("answer");
-                    double index = (double) answer.get("index");
-                    String header = getHeaderFromIndex(index, lastStory.get("topic").toString());
-
-                    answersList.add(new Answer(header, answerText));
-                }
-
-                adapter = new ListAnswers(this, answersList);
-                listView.setAdapter(adapter);
-            }
+            });
         }
-
-        // User ask
-        EditText questionPrompt = findViewById(R.id.questionPrompt);
-        Button askButton = findViewById(R.id.askButton);
-        loadingIndex = new AtomicInteger(2); //Start on 2, because 0. Story 1. Question
-
-        askButton.setOnClickListener(v -> {
-            if (solved.equals("false")) {
-                String text = questionPrompt.getText().toString();
-
-                adapter.add(new Answer("ASKER", text));
-                questionPrompt.getText().clear();
-
-                answer(text);
-            }
-            else {
-                snackbar = Snackbar.make(actualView, "You already solved this story!", Snackbar.LENGTH_SHORT);
-                snackbar.show();
-            }
-        });
-
-        // Buttons
-        Button solutionButton = findViewById(R.id.solutionButton);
-        Button newStoryButton = findViewById(R.id.newStoryButton);
-
-
-        solutionButton.setOnClickListener(v -> {
-            String questionSolution = questionPrompt.getText().toString();
-            if (solved.equals("false")) {
-                if (!questionSolution.equals("")) {
-                    adapter.add(new Answer("ASKER", questionSolution));
-                    questionPrompt.getText().clear();
-
-                    lang = languageTextView.getText().toString();
-                    String solutionPrompt = format("%s, answer in %s language", questionSolution, lang);
-                    solution(solutionPrompt);
-                }
-                else {
-                    snackbar = Snackbar.make(actualView, "Write solution in input!", Snackbar.LENGTH_SHORT);
-                    snackbar.show();
-                }
-            }
-        });
-
-        newStoryButton.setOnClickListener(v -> {
-            lang = languageTextView.getText().toString();
-            storyFormatPrompt = format("Write dark story, in %s language", lang);
-            loadingIndex.set(0);
-            adapter.clear();
-
-            sessionId = UUID.randomUUID().toString();
-            createStory(storyFormatPrompt, sessionId);
-        });
     }
 
     // Story functions
@@ -172,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.add(new Answer(true));
                 adapter.notifyDataSetChanged();
             });
-            return api.createStoryRequest(storyFormatPrompt, newSessionId);
+            return api.createStoryRequest(storyFormatPrompt, newSessionId, userId);
         }).thenAcceptAsync(result -> runOnUiThread(() -> {
             adapter.remove(adapter.getItem(0));  // Remove the loading item
             try {
@@ -192,12 +219,14 @@ public class MainActivity extends AppCompatActivity {
                 adapter.add(new Answer(true));
                 adapter.notifyDataSetChanged();
             });
-            return api.ask(format("%s, answer in %s language", askPrompt, lang), sessionId);
+            return api.ask(format("%s, answer in %s language", askPrompt, language), sessionId);
         }).thenAcceptAsync(result -> runOnUiThread(() -> {
-            adapter.remove(adapter.getItem(loadingIndex.get()));  // Remove the loading item
+            System.out.println(adapter.getItem(loadingIndex.get()).toString());
             loadingIndex.addAndGet(2);
+            System.out.println(adapter.getItem(loadingIndex.get()).toString());
+            adapter.remove(adapter.getItem(loadingIndex.get()));  // Remove the loading item
             try {
-                adapter.add(new Answer("STORY TELLER", result.getString("answer")));
+                adapter.add(new Answer("AI", result.getString("answer")));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -217,8 +246,8 @@ public class MainActivity extends AppCompatActivity {
             adapter.remove(adapter.getItem(loadingIndex.get()));  // Remove the loading item
             loadingIndex.addAndGet(2);
             try {
-                adapter.add(new Answer("STORY TELLER", result.getString("answer")));
-                solved = result.getString("solved");
+                adapter.add(new Answer("AI", result.getString("answer")));
+                defaultSolved = result.getString("solved");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -226,8 +255,8 @@ public class MainActivity extends AppCompatActivity {
         }));
     }
 
-    public CompletableFuture<Void> getStories() {
-        return CompletableFuture.supplyAsync(api::storiesRequest)
+    public CompletableFuture<Void> getStories(String userId) {
+        return CompletableFuture.supplyAsync(() -> api.storiesRequest(userId))
                 .thenAcceptAsync(result -> stories = result);
     }
 
@@ -265,10 +294,10 @@ public class MainActivity extends AppCompatActivity {
         if (index == 0.0){
             return topic;
         }
-        else if (index % 2 == 1.0) {
-            return "STORY TELLER";
+        else if (index % 2 == 0.0) {
+            return "AI";
         } else {
-            return "ASKER";
+            return name;
         }
     }
 }
