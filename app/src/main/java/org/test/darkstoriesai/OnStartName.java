@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,14 +22,8 @@ public class OnStartName extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("FIRST-LOADING", Context.MODE_PRIVATE);
 
 
-        LinearLayout languages = findViewById(R.id.languages);
         EditText nameInput = findViewById(R.id.nameInput);
         Button next = findViewById(R.id.nextButton);
-
-        languages.setOnClickListener(view -> {
-            Intent languagesIntent = new Intent(this, Languages.class);
-            startActivity(languagesIntent);
-        });
 
         next.setOnClickListener(view -> {
             String name = nameInput.getText().toString();
@@ -42,10 +35,10 @@ public class OnStartName extends AppCompatActivity {
             editor.putString("userId", userId);
             editor.apply();
 
-            setUser(name, userId);
+           setUser(name, userId);
 
-            Intent mainIntent = new Intent(this, MainActivity.class);
-            startActivity(mainIntent);
+            Intent fearIntent = new Intent(this, OnStartFearAnimal.class);
+            startActivity(fearIntent);
 
             finish();
         });

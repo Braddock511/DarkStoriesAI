@@ -19,4 +19,19 @@
     <string name="name">Wpisz swoje imię</string>
     <string name="logo">logo</string>
     <string name="next">Dalej</string>
+    <string name="spiders">Pająków</string>
+    <string name="bugs">Robaków</string>
+    <string name="snakes">Węży</string>
+    <string name="sharks">Rekinów</string>
+    <string name="animal">Których zwierząt najbardziej się boisz?</string>
+    <string name="hospital">Opuszczony szpital</string>
+    <string name="graveyard">Cmentarz</string>
+    <string name="house">Opuszczony dom</string>
+    <string name="church">Kościół</string>
+    <string name="place">Najstraszniejsze miejsce</string>
+    <string name="monster">Najstraszniejszy potwór</string>
+    <string name="vampire">Wampir</string>
+    <string name="werewolf">Wilkołak</string>
+    <string name="zombie">Zombie</string>
+    <string name="skeleton">Szkielet</string>
 </resources>

@@ -18,4 +18,19 @@
     <string name="name">Enter your name</string>
     <string name="logo">logo</string>
     <string name="next">Next</string>
+    <string name="spiders">Spiders</string>
+    <string name="bugs">Bugs</string>
+    <string name="snakes">Snakes</string>
+    <string name="sharks">Sharks</string>
+    <string name="animal">Which animals are you most afraid of?</string>
+    <string name="hospital">Abandoned hospital</string>
+    <string name="graveyard">Graveyard</string>
+    <string name="house">Abandoned house</string>
+    <string name="church">Church</string>
+    <string name="place">The scariest place</string>
+    <string name="monster">The scariest monster</string>
+    <string name="vampire">Vampire</string>
+    <string name="werewolf">Werewolf</string>
+    <string name="zombie">Zombie</string>
+    <string name="skeleton">Skeleton</string>
 </resources>
