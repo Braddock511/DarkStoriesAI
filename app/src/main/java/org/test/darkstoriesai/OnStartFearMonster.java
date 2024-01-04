@@ -1,6 +1,8 @@
 package org.test.darkstoriesai;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
@@ -12,6 +14,8 @@ public class OnStartFearMonster extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.on_start_fear_monster);
+        SharedPreferences sharedPreferences = getSharedPreferences("FIRST-LOADING", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         LinearLayout vampire = findViewById(R.id.vampire);
         LinearLayout werewolf = findViewById(R.id.werewolf);
@@ -21,6 +25,8 @@ public class OnStartFearMonster extends AppCompatActivity {
         vampire.setOnClickListener(view -> {
             Intent fearIntent = new Intent(this, OnStartFearPlace.class);
             startActivity(fearIntent);
+            editor.putString("monster", "vampire");
+            editor.apply();
 
             finish();
         });
@@ -28,6 +34,8 @@ public class OnStartFearMonster extends AppCompatActivity {
         werewolf.setOnClickListener(view -> {
             Intent fearIntent = new Intent(this, OnStartFearPlace.class);
             startActivity(fearIntent);
+            editor.putString("monster", "werewolf");
+            editor.apply();
 
             finish();
         });
@@ -35,6 +43,8 @@ public class OnStartFearMonster extends AppCompatActivity {
         zombie.setOnClickListener(view -> {
             Intent fearIntent = new Intent(this, OnStartFearPlace.class);
             startActivity(fearIntent);
+            editor.putString("monster", "zombie");
+            editor.apply();
 
             finish();;
         });
@@ -42,6 +52,8 @@ public class OnStartFearMonster extends AppCompatActivity {
         skeleton.setOnClickListener(view -> {
             Intent fearIntent = new Intent(this, OnStartFearPlace.class);
             startActivity(fearIntent);
+            editor.putString("monster", "skeleton");
+            editor.apply();
 
             finish();
         });

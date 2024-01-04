@@ -1,6 +1,8 @@
 package org.test.darkstoriesai;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
@@ -12,6 +14,8 @@ public class OnStartFearPlace extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.on_start_fear_place);
+        SharedPreferences sharedPreferences = getSharedPreferences("FIRST-LOADING", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         LinearLayout hospital = findViewById(R.id.hospital);
         LinearLayout graveyard = findViewById(R.id.graveyard);
@@ -21,6 +25,8 @@ public class OnStartFearPlace extends AppCompatActivity {
         hospital.setOnClickListener(view -> {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
+            editor.putString("place", "abandoned hospital");
+            editor.apply();
 
             finish();
         });
@@ -28,6 +34,8 @@ public class OnStartFearPlace extends AppCompatActivity {
         graveyard.setOnClickListener(view -> {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
+            editor.putString("place", "graveyard");
+            editor.apply();
 
             finish();
         });
@@ -35,6 +43,8 @@ public class OnStartFearPlace extends AppCompatActivity {
         church.setOnClickListener(view -> {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
+            editor.putString("place", "church");
+            editor.apply();
 
             finish();;
         });
@@ -42,6 +52,8 @@ public class OnStartFearPlace extends AppCompatActivity {
         house.setOnClickListener(view -> {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
+            editor.putString("place", "abandoned house");
+            editor.apply();
 
             finish();
         });

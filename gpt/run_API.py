@@ -24,8 +24,12 @@ async def story(request: StoryRequest):
         story_format = request.story_format
         session_id = request.session_id
         user_id = request.user_id
+        animal = request.animal
+        monster = request.monster
+        place = request.place
 
-        story = dict(create_story(story_format))
+        fears = [animal, monster, place]
+        story = dict(create_story(story_format, fears))
         story_key = f"story:{session_id}"
         story_content = {"session_id": session_id, "user_id": user_id, "topic": story['topic'], "story": story['story'], "answers": [{"index": 0, "answer": story['story']}], "solution": story['solution']}
         redis.set_value(story_key, story_content)  

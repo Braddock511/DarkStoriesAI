@@ -1,10 +1,7 @@
 import os
 
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from models import Story, Answer, Solution
 from dotenv import load_dotenv
@@ -16,6 +13,7 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 STORY_TEMPLATE = """
     {story_format}
+    You can add these fears to story: {fears}
     Follow task instructions strictly, respond only with a story in two sentences as the storyteller for 'Dark Stories' game, avoid unnecessary phrases. In this order:
     {format_instructions}
     """
@@ -30,7 +28,7 @@ SOLUTION_TEMPLATE = """
     {format_instructions}
 """
     
-def create_story(story_format: str) -> Story:
+def create_story(story_format: str, fears: list) -> Story:
     parser = PydanticOutputParser(pydantic_object=Story)
 
     llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model_name=OPENAI_MODEL)
@@ -39,8 +37,11 @@ def create_story(story_format: str) -> Story:
     )
     chat_prompt = ChatPromptTemplate.from_messages([message])
 
+    fears = ", ".join(fears)
     chat_prompt_with_values = chat_prompt.format_prompt(
-        story_format=story_format, format_instructions=parser.get_format_instructions()
+        story_format=story_format, 
+        fears=fears, 
+        format_instructions=parser.get_format_instructions()
     )
     output = llm(chat_prompt_with_values.to_messages()).content
     result = parser.parse(output)

@@ -35,7 +35,7 @@ public class OnStartName extends AppCompatActivity {
             editor.putString("userId", userId);
             editor.apply();
 
-           setUser(name, userId);
+            setUser(name, userId);
 
             Intent fearIntent = new Intent(this, OnStartFearAnimal.class);
             startActivity(fearIntent);
@@ -47,6 +47,6 @@ public class OnStartName extends AppCompatActivity {
     private void setUser(String name, String userId) {
         API api = new API();
 
-        CompletableFuture.supplyAsync(() -> api.setUser(name, userId)).thenAcceptAsync(result -> runOnUiThread(() -> System.out.println(result.toString())));
+        CompletableFuture.supplyAsync(() -> api.setUser(name, userId));
     }
 }

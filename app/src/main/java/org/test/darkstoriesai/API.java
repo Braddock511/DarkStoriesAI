@@ -30,13 +30,16 @@ public class API {
                 .build();
     }
 
-    public JSONObject createStoryRequest(String story_format, String sessionId, String userId) {
+    public JSONObject createStoryRequest(String story_format, String sessionId, String userId, String animal, String monster, String place) {
         try {
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("story_format", story_format);
             jsonBody.put("session_id", sessionId);
             jsonBody.put("user_id", userId);
-            System.out.println(jsonBody);
+            jsonBody.put("animal", animal);
+            jsonBody.put("monster", monster);
+            jsonBody.put("place", place);
+
             String json = jsonBody.toString();
             RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
@@ -59,7 +62,6 @@ public class API {
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("user_prompt", prompt);
             jsonBody.put("session_id", sessionId);
-            System.out.println(jsonBody);
 
             String json = jsonBody.toString();
             RequestBody requestBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
@@ -73,7 +75,6 @@ public class API {
             Response response = client.newCall(request).execute();
 
             String jsonResponse = response.body().string();
-            System.out.println(jsonResponse);
             return new JSONObject(jsonResponse);
         } catch (JSONException | IOException e) {
             throw new RuntimeException(e);

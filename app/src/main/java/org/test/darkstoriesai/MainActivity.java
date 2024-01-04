@@ -39,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
     private String sessionId;
     private String userId;
     private String name;
+    private String animal;
+    private String monster;
+    private String place;
     private List<Map<String, Object>> stories;
     private String language;
     private ListAnswers adapter;
     private AtomicInteger loadingIndex;
     private String storyFormatPrompt;
     private Snackbar snackbar;
-    private SplashActivity splashLoading;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -74,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
             language = preferences.getString("language", "english");
             userId = preferences.getString("userId", "");
             name = preferences.getString("name", "");
+            animal = preferences.getString("animal", "");
+            monster = preferences.getString("monster", "");
+            place = preferences.getString("place", "");
+
             storyFormatPrompt = format("Write dark story, in %s language", language);
 
             // Toolbar
@@ -199,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.add(new Answer(true));
                 adapter.notifyDataSetChanged();
             });
-            return api.createStoryRequest(storyFormatPrompt, newSessionId, userId);
+            return api.createStoryRequest(storyFormatPrompt, newSessionId, userId, animal, monster, place);
         }).thenAcceptAsync(result -> runOnUiThread(() -> {
             adapter.remove(adapter.getItem(0));  // Remove the loading item
             try {
@@ -221,9 +227,7 @@ public class MainActivity extends AppCompatActivity {
             });
             return api.ask(format("%s, answer in %s language", askPrompt, language), sessionId);
         }).thenAcceptAsync(result -> runOnUiThread(() -> {
-            System.out.println(adapter.getItem(loadingIndex.get()).toString());
             loadingIndex.addAndGet(2);
-            System.out.println(adapter.getItem(loadingIndex.get()).toString());
             adapter.remove(adapter.getItem(loadingIndex.get()));  // Remove the loading item
             try {
                 adapter.add(new Answer("AI", result.getString("answer")));
